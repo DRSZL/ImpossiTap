@@ -1,40 +1,61 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-    --bg: #0a0a0a;
-    --surface: #1a1a1a;
-    --accent: #c8f55a;
-    --text: #ffffff;
+    --bg: #0a0a0a; --surface: #141414; --border: #222;
+    --accent: #c8f55a; --text: #f0f0f0; --muted: #555;
+    --mono: 'DM Mono', monospace;
+    --display: 'Bebas Neue', cursive;
+    --body: 'DM Sans', sans-serif;
 }
-
-body {
-    margin: 0; background: var(--bg); color: var(--text);
-    font-family: 'Inter', -apple-system, sans-serif;
-    overflow: hidden; touch-action: manipulation;
+html, body {
+    width: 100%; height: 100%;
+    background: var(--bg); color: var(--text);
+    font-family: var(--body); overflow: hidden;
+    -webkit-tap-highlight-color: transparent; user-select: none;
 }
-
-#game-container {
-    height: 100vh; display: flex; flex-direction: column; padding: 20px;
-}
-
-.header { text-align: center; margin-top: 40px; }
-.target-label { color: var(--accent); letter-spacing: 2px; font-weight: bold; }
-
-.main-display {
-    flex-grow: 1; display: flex; flex-direction: column;
+.screen {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
     align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.4s ease; padding: 32px 24px;
+}
+.screen.active { opacity: 1; pointer-events: all; }
+
+.home-header { position: absolute; top: 48px; left: 0; right: 0; text-align: center; }
+.app-name { font-family: var(--display); font-size: 48px; letter-spacing: 6px; line-height: 1; }
+.app-tagline { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 3px; margin-top: 6px; text-transform: uppercase; }
+
+.target-display { text-align: center; margin-bottom: 40px; }
+.target-label { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 12px; }
+.target-time { font-family: var(--display); font-size: 46px; color: var(--accent); line-height: 1; letter-spacing: 1px; }
+.target-unit { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-top: 8px; }
+
+.play-btn {
+    width: 180px; height: 180px; border-radius: 50%;
+    background: var(--accent); border: none; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+    animation: pulse 3s ease-in-out infinite;
+}
+.play-btn-text { font-family: var(--display); font-size: 26px; color: #0a0a0a; letter-spacing: 4px; }
+.play-btn-sub { font-family: var(--mono); font-size: 9px; color: rgba(0,0,0,0.5); }
+
+.nav-trigger { margin-top: 40px; font-family: var(--mono); font-size: 10px; cursor: pointer; color: var(--muted); text-decoration: underline; }
+
+#game { background: #000; }
+.timer-display { font-family: var(--display); font-size: 64px; color: var(--text); font-variant-numeric: tabular-nums; }
+.timer-display.running { color: var(--accent); }
+.unit-label { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-top: 10px; }
+
+.stats-grid { width: 100%; max-width: 360px; margin-bottom: 20px; }
+.rank-item { 
+    background: var(--surface); border: 1px solid var(--border); 
+    padding: 12px; margin-bottom: 6px; font-family: var(--mono); font-size: 12px;
+    display: flex; justify-content: space-between;
 }
 
-.timer { font-size: 5rem; font-weight: 900; font-variant-numeric: tabular-nums; }
-.unit { color: #555; letter-spacing: 4px; font-size: 0.7rem; margin-top: 10px; }
+.btn-back { background: none; border: 1px solid var(--border); color: var(--muted); padding: 10px 20px; font-family: var(--mono); cursor: pointer; margin-top: 20px; text-transform: uppercase; letter-spacing: 2px; }
 
-.leaderboard {
-    background: var(--surface); border-radius: 15px; padding: 15px;
-    margin-bottom: 20px; max-height: 200px; overflow-y: auto;
-}
-
-.leaderboard h3 { font-size: 0.7rem; color: #888; margin-bottom: 10px; }
-#rank-list { list-style: none; padding: 0; font-size: 0.9rem; }
-
-.btn-share {
-    width: 100%; background: var(--accent); color: #000; border: none;
-    padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer;
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 0 40px rgba(200,245,90,0.15); }
+    50% { box-shadow: 0 0 80px rgba(200,245,90,0.35); }
 }

@@ -1,0 +1,8 @@
+# OS Dateien
+.DS_Store
+Thumbs.db
+
+# Entwickler-Ordner
+node_modules/
+dist/
+build/

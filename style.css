@@ -1,0 +1,40 @@
+:root {
+    --bg: #0a0a0a;
+    --surface: #1a1a1a;
+    --accent: #c8f55a;
+    --text: #ffffff;
+}
+
+body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: 'Inter', -apple-system, sans-serif;
+    overflow: hidden; touch-action: manipulation;
+}
+
+#game-container {
+    height: 100vh; display: flex; flex-direction: column; padding: 20px;
+}
+
+.header { text-align: center; margin-top: 40px; }
+.target-label { color: var(--accent); letter-spacing: 2px; font-weight: bold; }
+
+.main-display {
+    flex-grow: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+}
+
+.timer { font-size: 5rem; font-weight: 900; font-variant-numeric: tabular-nums; }
+.unit { color: #555; letter-spacing: 4px; font-size: 0.7rem; margin-top: 10px; }
+
+.leaderboard {
+    background: var(--surface); border-radius: 15px; padding: 15px;
+    margin-bottom: 20px; max-height: 200px; overflow-y: auto;
+}
+
+.leaderboard h3 { font-size: 0.7rem; color: #888; margin-bottom: 10px; }
+#rank-list { list-style: none; padding: 0; font-size: 0.9rem; }
+
+.btn-share {
+    width: 100%; background: var(--accent); color: #000; border: none;
+    padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer;
+}

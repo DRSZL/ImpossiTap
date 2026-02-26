@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ImpossiTap - Micro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <div class="header">
+            <div class="target-label">ZIEL: 1.337.000 μs</div>
+        </div>
+
+        <div class="main-display" onclick="handleTap()">
+            <div class="timer" id="display">0</div>
+            <div class="unit">MIKROSEKUNDEN</div>
+        </div>
+
+        <div class="leaderboard" id="leaderboard">
+            <h3>WELTRANGLISTE (HEUTE)</h3>
+            <ul id="rank-list">
+                <li>Lade Rangliste...</li>
+            </ul>
+        </div>
+
+        <div class="actions">
+            <button onclick="shareResult()" class="btn-share">ERGEBNIS TEILEN</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

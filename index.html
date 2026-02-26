@@ -1,44 +1,131 @@
 <!DOCTYPE html>
+
 <html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ImpossiTap - Micro Edition</title>
-    <link rel="stylesheet" href="style.css">
+    <title>ImpossiTap</title>
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<!-- HOME -->
 
 <div class="screen active" id="home">
     <div class="home-header">
         <div class="app-name">IMPOSSITAP</div>
-        <div class="app-tagline">Micro-Precision Challenge</div>
+        <div class="app-tagline">You can't. But try anyway.</div>
     </div>
     <div class="target-display">
         <div class="target-label">Heutiges Ziel</div>
-        <div class="target-time">1.337.000</div>
-        <div class="target-unit">Mikrosekunden</div>
+        <div class="target-time">1.337.000.000</div>
+        <div class="target-unit">Nanosekunden</div>
+    </div>
+    <div class="home-stats">
+        <div class="stat-box">
+            <div class="stat-val" id="best-stat">—</div>
+            <div class="stat-lbl">Bester (ns)</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-val" id="tries-stat">0</div>
+            <div class="stat-lbl">Versuche</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-val" id="rank-stat">#—</div>
+            <div class="stat-lbl">Rang</div>
+        </div>
     </div>
     <button class="play-btn" onclick="showScreen('game'); startGame()">
-        <div class="play-btn-text">START</div>
-        <div class="play-btn-sub">Zweimal tippen</div>
+        <div class="play-btn-text">TIPPE</div>
+        <div class="play-btn-sub">zweimal</div>
     </button>
-    <div class="nav-trigger" onclick="showScreen('stats')">WELTRANGLISTE ANSEHEN</div>
+    <div class="nav-tabs">
+        <div class="nav-tab active-tab" onclick="showScreen('home')">Spiel</div>
+        <div class="nav-tab" onclick="showScreen('stats')">Stats</div>
+    </div>
 </div>
+
+<!-- GAME -->
 
 <div class="screen" id="game" onclick="handleGameTap(event)">
+    <div class="tap-rings" id="rings"></div>
+    <div class="game-instruction" id="game-instruction">Tippe zum Starten</div>
     <div class="timer-display" id="timer-display">0</div>
-    <div class="unit-label">MIKROSEKUNDEN</div>
+    <div class="timer-unit">Nanosekunden</div>
+    <div class="game-target-hint">Ziel: 1.337.000.000 ns</div>
 </div>
 
+<!-- RESULT -->
+
+<div class="screen" id="result">
+    <div class="result-header">Ergebnis</div>
+    <div class="result-grade" id="result-grade">UNMÖGLICH</div>
+    <div class="result-emoji" id="result-emoji">🏆</div>
+    <div class="result-comparison">
+        <div class="res-col">
+            <div class="res-col-label">Deine Zeit</div>
+            <div class="res-col-val highlight" id="your-time">—</div>
+            <div class="res-col-unit">ns</div>
+        </div>
+        <div class="res-vs">vs</div>
+        <div class="res-col">
+            <div class="res-col-label">Ziel</div>
+            <div class="res-col-val">1.337.000.000</div>
+            <div class="res-col-unit">ns</div>
+        </div>
+    </div>
+    <div class="deviation-bar">
+        <div class="dev-label">
+            <span>Zu früh</span>
+            <span id="dev-text">—</span>
+            <span>Zu spät</span>
+        </div>
+        <div class="dev-track">
+            <div class="dev-mark"></div>
+            <div class="dev-indicator" id="dev-indicator"></div>
+        </div>
+    </div>
+    <div class="result-rank">Besser als <span id="rank-pct">—</span> der Welt heute</div>
+    <div class="result-btns">
+        <button class="btn-primary" onclick="showScreen('game'); startGame()">NOCHMAL</button>
+        <button class="btn-secondary" onclick="showScreen('home')">Home</button>
+    </div>
+</div>
+
+<!-- STATS / LEADERBOARD -->
+
 <div class="screen" id="stats">
-    <div class="app-name">WORLD RANK</div>
-    <div class="stats-grid" id="leaderboard-list"></div>
-    <button onclick="showScreen('home')" class="btn-back">ZURÜCK</button>
+    <button class="back-btn" onclick="showScreen('home')">← Zurück</button>
+    <div class="stats-title">WELTRANG</div>
+    <div class="stats-grid">
+        <div class="stats-card">
+            <div class="stats-card-val" id="stat-best-ns">—</div>
+            <div class="stats-card-lbl">Bester heute</div>
+        </div>
+        <div class="stats-card">
+            <div class="stats-card-val" id="stat-tries-total">0</div>
+            <div class="stats-card-lbl">Versuche heute</div>
+        </div>
+        <div class="stats-card">
+            <div class="stats-card-val" id="stat-world-rank">#—</div>
+            <div class="stats-card-lbl">Weltrang</div>
+        </div>
+        <div class="stats-card">
+            <div class="stats-card-val">7</div>
+            <div class="stats-card-lbl">Tage Streak 🔥</div>
+        </div>
+    </div>
+    <div class="leaderboard-container">
+        <div class="leaderboard-title">Top 10 Weltweit</div>
+        <div id="leaderboard-list"><div class="lb-loading">Lade Rangliste...</div></div>
+    </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
 <script src="app.js"></script>
 
 </body>

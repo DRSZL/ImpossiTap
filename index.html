@@ -3,32 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ImpossiTap - Micro</title>
+    <title>ImpossiTap - Micro Edition</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="game-container">
-        <div class="header">
-            <div class="target-label">ZIEL: 1.337.000 μs</div>
-        </div>
 
-        <div class="main-display" onclick="handleTap()">
-            <div class="timer" id="display">0</div>
-            <div class="unit">MIKROSEKUNDEN</div>
-        </div>
-
-        <div class="leaderboard" id="leaderboard">
-            <h3>WELTRANGLISTE (HEUTE)</h3>
-            <ul id="rank-list">
-                <li>Lade Rangliste...</li>
-            </ul>
-        </div>
-
-        <div class="actions">
-            <button onclick="shareResult()" class="btn-share">ERGEBNIS TEILEN</button>
-        </div>
+<div class="screen active" id="home">
+    <div class="home-header">
+        <div class="app-name">IMPOSSITAP</div>
+        <div class="app-tagline">Micro-Precision Challenge</div>
     </div>
+    <div class="target-display">
+        <div class="target-label">Heutiges Ziel</div>
+        <div class="target-time">1.337.000</div>
+        <div class="target-unit">Mikrosekunden</div>
+    </div>
+    <button class="play-btn" onclick="showScreen('game'); startGame()">
+        <div class="play-btn-text">START</div>
+        <div class="play-btn-sub">Zweimal tippen</div>
+    </button>
+    <div class="nav-trigger" onclick="showScreen('stats')">WELTRANGLISTE ANSEHEN</div>
+</div>
 
-    <script src="app.js"></script>
+<div class="screen" id="game" onclick="handleGameTap(event)">
+    <div class="timer-display" id="timer-display">0</div>
+    <div class="unit-label">MIKROSEKUNDEN</div>
+</div>
+
+<div class="screen" id="stats">
+    <div class="app-name">WORLD RANK</div>
+    <div class="stats-grid" id="leaderboard-list"></div>
+    <button onclick="showScreen('home')" class="btn-back">ZURÜCK</button>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="app.js"></script>
+
 </body>
 </html>

@@ -2,131 +2,382 @@
 
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ImpossiTap</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ImpossiTap</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0a0a0a; --surface: #141414; --border: #222;
+    --accent: #c8f55a; --accent2: #f55a5a;
+    --text: #f0f0f0; --muted: #555;
+    --mono: 'DM Mono', monospace;
+    --display: 'Bebas Neue', cursive;
+    --body: 'DM Sans', sans-serif;
+  }
+  html, body {
+    width: 100%; height: 100%;
+    background: var(--bg); color: var(--text);
+    font-family: var(--body); overflow: hidden;
+    -webkit-tap-highlight-color: transparent; user-select: none;
+  }
+  .screen {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.4s ease; padding: 32px 24px;
+  }
+  .screen.active { opacity: 1; pointer-events: all; }
+
+/* HOME */
+.home-header { position: absolute; top: 48px; left: 0; right: 0; text-align: center; }
+.app-name { font-family: var(–display); font-size: 48px; letter-spacing: 6px; line-height: 1; }
+.app-tagline { font-family: var(–mono); font-size: 10px; color: var(–muted); letter-spacing: 3px; margin-top: 6px; text-transform: uppercase; }
+
+.target-display { text-align: center; margin-bottom: 40px; }
+.target-label { font-family: var(–mono); font-size: 10px; color: var(–muted); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 12px; }
+.target-time { font-family: var(–display); font-size: 46px; color: var(–accent); line-height: 1; letter-spacing: 1px; }
+.target-unit { font-family: var(–mono); font-size: 11px; color: var(–muted); letter-spacing: 3px; margin-top: 6px; text-transform: uppercase; }
+
+.home-stats { display: flex; gap: 16px; margin-bottom: 48px; }
+.stat-box { background: var(–surface); border: 1px solid var(–border); padding: 14px 18px; text-align: center; min-width: 90px; }
+.stat-val { font-family: var(–mono); font-size: 14px; color: var(–text); font-weight: 500; }
+.stat-lbl { font-family: var(–mono); font-size: 8px; color: var(–muted); letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; }
+
+.play-btn {
+width: 180px; height: 180px; border-radius: 50%;
+background: var(–accent); border: none; cursor: pointer;
+display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+transition: transform 0.15s ease; animation: pulse 3s ease-in-out infinite;
+}
+.play-btn:active { transform: scale(0.95); }
+.play-btn-text { font-family: var(–display); font-size: 26px; color: #0a0a0a; letter-spacing: 4px; }
+.play-btn-sub { font-family: var(–mono); font-size: 9px; color: rgba(0,0,0,0.5); letter-spacing: 2px; text-transform: uppercase; }
+@keyframes pulse {
+0%,100% { box-shadow: 0 0 60px rgba(200,245,90,0.2); }
+50% { box-shadow: 0 0 100px rgba(200,245,90,0.45); }
+}
+
+.nav-tabs { position: absolute; bottom: 32px; display: flex; gap: 32px; }
+.nav-tab { font-family: var(–mono); font-size: 10px; letter-spacing: 2px; color: var(–muted); cursor: pointer; text-transform: uppercase; padding: 8px 0; border-bottom: 1px solid transparent; transition: color 0.2s, border-color 0.2s; }
+.nav-tab.active-tab { color: var(–accent); border-color: var(–accent); }
+
+/* GAME */
+#game { background: #000; cursor: pointer; }
+.game-instruction { font-family: var(–mono); font-size: 11px; letter-spacing: 4px; color: var(–muted); text-transform: uppercase; margin-bottom: 24px; }
+.timer-display { font-family: var(–display); font-size: 64px; color: var(–text); line-height: 1; transition: color 0.1s; text-align: center; letter-spacing: 1px; }
+.timer-display.running { color: var(–accent); }
+.timer-unit { font-family: var(–mono); font-size: 10px; color: var(–muted); letter-spacing: 3px; text-transform: uppercase; margin-top: 8px; text-align: center; }
+.game-target-hint { font-family: var(–mono); font-size: 10px; color: var(–muted); letter-spacing: 2px; margin-top: 28px; }
+.tap-rings { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.ring {
+position: absolute; border-radius: 50%; border: 1px solid var(–accent);
+opacity: 0; transform: translate(-50%,-50%) scale(0);
+animation: ringOut 0.8s ease-out forwards;
+}
+@keyframes ringOut {
+0% { opacity: 0.6; transform: translate(-50%,-50%) scale(0); }
+100% { opacity: 0; transform: translate(-50%,-50%) scale(4); }
+}
+
+/* RESULT */
+#result { background: var(–bg); gap: 0; }
+.result-header { font-family: var(–mono); font-size: 10px; letter-spacing: 4px; color: var(–muted); text-transform: uppercase; margin-bottom: 20px; }
+.result-grade { font-family: var(–display); font-size: 60px; letter-spacing: 4px; margin-bottom: 6px; text-align: center; }
+.result-grade.legendary { color: var(–accent); }
+.result-grade.good { color: #5af5c8; }
+.result-grade.ok { color: #f5c85a; }
+.result-grade.bad { color: var(–accent2); }
+.result-emoji { font-size: 28px; margin-bottom: 24px; }
+
+.result-comparison { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; width: 100%; max-width: 340px; }
+.res-col { flex: 1; text-align: center; background: var(–surface); border: 1px solid var(–border); padding: 14px 8px; }
+.res-col-label { font-family: var(–mono); font-size: 8px; color: var(–muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+.res-col-val { font-family: var(–display); font-size: 22px; letter-spacing: 1px; }
+.res-col-unit { font-family: var(–mono); font-size: 8px; color: var(–muted); letter-spacing: 1px; margin-top: 2px; }
+.res-col-val.highlight { color: var(–accent); }
+.res-vs { font-family: var(–mono); font-size: 11px; color: var(–muted); flex-shrink: 0; }
+
+.deviation-bar { width: 100%; max-width: 340px; margin-bottom: 24px; }
+.dev-label { font-family: var(–mono); font-size: 8px; color: var(–muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; display: flex; justify-content: space-between; }
+.dev-track { height: 4px; background: var(–border); position: relative; }
+.dev-mark { position: absolute; top: -6px; width: 2px; height: 16px; background: var(–muted); left: 50%; transform: translateX(-50%); }
+.dev-indicator { position: absolute; top: -8px; width: 20px; height: 20px; border-radius: 50%; background: var(–accent); transform: translateX(-50%); transition: left 0.6s cubic-bezier(0.34,1.56,0.64,1); left: 50%; }
+
+.result-rank { font-family: var(–mono); font-size: 11px; color: var(–muted); margin-bottom: 28px; text-align: center; }
+.result-rank span { color: var(–text); }
+
+.result-btns { display: flex; gap: 12px; width: 100%; max-width: 340px; }
+.btn-primary { flex: 2; background: var(–accent); color: #000; border: none; padding: 18px; font-family: var(–display); font-size: 20px; letter-spacing: 3px; cursor: pointer; }
+.btn-primary:active { opacity: 0.8; }
+.btn-secondary { flex: 1; background: transparent; color: var(–text); border: 1px solid var(–border); padding: 18px; font-family: var(–mono); font-size: 10px; letter-spacing: 2px; cursor: pointer; text-transform: uppercase; }
+.btn-secondary:active { border-color: var(–accent); }
+
+/* STATS */
+#stats { background: var(–bg); padding-top: 80px; }
+.stats-title { font-family: var(–display); font-size: 40px; letter-spacing: 4px; margin-bottom: 28px; align-self: flex-start; padding-left: 4px; }
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 360px; margin-bottom: 28px; }
+.stats-card { background: var(–surface); border: 1px solid var(–border); padding: 18px 16px; }
+.stats-card-val { font-family: var(–display); font-size: 28px; color: var(–accent); letter-spacing: 1px; }
+.stats-card-lbl { font-family: var(–mono); font-size: 9px; color: var(–muted); letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; }
+.chart-container { width: 100%; max-width: 360px; background: var(–surface); border: 1px solid var(–border); padding: 20px; margin-bottom: 24px; }
+.chart-title { font-family: var(–mono); font-size: 9px; color: var(–muted); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 16px; }
+.chart-svg { width: 100%; overflow: visible; }
+.back-btn { font-family: var(–mono); font-size: 10px; letter-spacing: 3px; color: var(–muted); cursor: pointer; text-transform: uppercase; background: none; border: none; padding: 8px; position: absolute; top: 48px; left: 24px; }
+
+body::after {
+content: ‘’; position: fixed; inset: 0;
+background-image: url(“data:image/svg+xml,%3Csvg viewBox=‘0 0 256 256’ xmlns=‘http://www.w3.org/2000/svg’%3E%3Cfilter id=‘noise’%3E%3CfeTurbulence type=‘fractalNoise’ baseFrequency=‘0.9’ numOctaves=‘4’ stitchTiles=‘stitch’/%3E%3C/filter%3E%3Crect width=‘100%25’ height=‘100%25’ filter=‘url(%23noise)’ opacity=‘0.04’/%3E%3C/svg%3E”);
+pointer-events: none; opacity: 0.4; z-index: 999;
+}
+</style>
+
 </head>
 <body>
 
 <!-- HOME -->
 
 <div class="screen active" id="home">
-    <div class="home-header">
-        <div class="app-name">IMPOSSITAP</div>
-        <div class="app-tagline">You can't. But try anyway.</div>
+  <div class="home-header">
+    <div class="app-name">IMPOSSITAP</div>
+    <div class="app-tagline">You can't. But try anyway.</div>
+  </div>
+  <div class="target-display">
+    <div class="target-label">Heutiges Ziel</div>
+    <div class="target-time">1.337</div>
+    <div class="target-unit">Millisekunden</div>
+  </div>
+  <div class="home-stats">
+    <div class="stat-box">
+      <div class="stat-val" id="best-stat">—</div>
+      <div class="stat-lbl">Bester (ms)</div>
     </div>
-    <div class="target-display">
-        <div class="target-label">Heutiges Ziel</div>
-        <div class="target-time">1.337.000.000</div>
-        <div class="target-unit">Nanosekunden</div>
+    <div class="stat-box">
+      <div class="stat-val" id="tries-stat">0</div>
+      <div class="stat-lbl">Versuche</div>
     </div>
-    <div class="home-stats">
-        <div class="stat-box">
-            <div class="stat-val" id="best-stat">—</div>
-            <div class="stat-lbl">Bester (ns)</div>
-        </div>
-        <div class="stat-box">
-            <div class="stat-val" id="tries-stat">0</div>
-            <div class="stat-lbl">Versuche</div>
-        </div>
-        <div class="stat-box">
-            <div class="stat-val" id="rank-stat">#—</div>
-            <div class="stat-lbl">Rang</div>
-        </div>
+    <div class="stat-box">
+      <div class="stat-val">#4.821</div>
+      <div class="stat-lbl">Rang</div>
     </div>
-    <button class="play-btn" onclick="showScreen('game'); startGame()">
-        <div class="play-btn-text">TIPPE</div>
-        <div class="play-btn-sub">zweimal</div>
-    </button>
-    <div class="nav-tabs">
-        <div class="nav-tab active-tab" onclick="showScreen('home')">Spiel</div>
-        <div class="nav-tab" onclick="showScreen('stats')">Stats</div>
-    </div>
+  </div>
+  <button class="play-btn" onclick="showScreen('game'); startGame()">
+    <div class="play-btn-text">TIPPE</div>
+    <div class="play-btn-sub">zweimal</div>
+  </button>
+  <div class="nav-tabs">
+    <div class="nav-tab active-tab" onclick="showScreen('home')">Spiel</div>
+    <div class="nav-tab" onclick="showScreen('stats')">Stats</div>
+  </div>
 </div>
 
 <!-- GAME -->
 
 <div class="screen" id="game" onclick="handleGameTap(event)">
-    <div class="tap-rings" id="rings"></div>
-    <div class="game-instruction" id="game-instruction">Tippe zum Starten</div>
-    <div class="timer-display" id="timer-display">0</div>
-    <div class="timer-unit">Nanosekunden</div>
-    <div class="game-target-hint">Ziel: 1.337.000.000 ns</div>
+  <div class="tap-rings" id="rings"></div>
+  <div class="game-instruction" id="game-instruction">Tippe zum Starten</div>
+  <div class="timer-display" id="timer-display">0</div>
+  <div class="timer-unit">Millisekunden</div>
+  <div class="game-target-hint">Ziel: 1.337 ms</div>
 </div>
 
 <!-- RESULT -->
 
 <div class="screen" id="result">
-    <div class="result-header">Ergebnis</div>
-    <div class="result-grade" id="result-grade">UNMÖGLICH</div>
-    <div class="result-emoji" id="result-emoji">🏆</div>
-    <div class="result-comparison">
-        <div class="res-col">
-            <div class="res-col-label">Deine Zeit</div>
-            <div class="res-col-val highlight" id="your-time">—</div>
-            <div class="res-col-unit">ns</div>
-        </div>
-        <div class="res-vs">vs</div>
-        <div class="res-col">
-            <div class="res-col-label">Ziel</div>
-            <div class="res-col-val">1.337.000.000</div>
-            <div class="res-col-unit">ns</div>
-        </div>
+  <div class="result-header">Ergebnis</div>
+  <div class="result-grade" id="result-grade">UNMÖGLICH</div>
+  <div class="result-emoji" id="result-emoji">🏆</div>
+  <div class="result-comparison">
+    <div class="res-col">
+      <div class="res-col-label">Deine Zeit</div>
+      <div class="res-col-val highlight" id="your-time">—</div>
+      <div class="res-col-unit">ns</div>
     </div>
-    <div class="deviation-bar">
-        <div class="dev-label">
-            <span>Zu früh</span>
-            <span id="dev-text">—</span>
-            <span>Zu spät</span>
-        </div>
-        <div class="dev-track">
-            <div class="dev-mark"></div>
-            <div class="dev-indicator" id="dev-indicator"></div>
-        </div>
+    <div class="res-vs">vs</div>
+    <div class="res-col">
+      <div class="res-col-label">Ziel</div>
+      <div class="res-col-val">1.337</div>
+      <div class="res-col-unit">ns</div>
     </div>
-    <div class="result-rank">Besser als <span id="rank-pct">—</span> der Welt heute</div>
-    <div class="result-btns">
-        <button class="btn-primary" onclick="showScreen('game'); startGame()">NOCHMAL</button>
-        <button class="btn-secondary" onclick="showScreen('home')">Home</button>
+  </div>
+  <div class="deviation-bar">
+    <div class="dev-label">
+      <span>Zu früh</span>
+      <span id="dev-text">—</span>
+      <span>Zu spät</span>
     </div>
+    <div class="dev-track">
+      <div class="dev-mark"></div>
+      <div class="dev-indicator" id="dev-indicator"></div>
+    </div>
+  </div>
+  <div class="result-rank">Besser als <span id="rank-pct">—</span> der Welt heute</div>
+  <div class="result-btns">
+    <button class="btn-primary" onclick="showScreen('game'); startGame()">NOCHMAL</button>
+    <button class="btn-secondary" onclick="showScreen('home')">Home</button>
+  </div>
 </div>
 
-<!-- STATS / LEADERBOARD -->
+<!-- STATS -->
 
 <div class="screen" id="stats">
-    <button class="back-btn" onclick="showScreen('home')">← Zurück</button>
-    <div class="stats-title">WELTRANG</div>
-    <div class="stats-grid">
-        <div class="stats-card">
-            <div class="stats-card-val" id="stat-best-ns">—</div>
-            <div class="stats-card-lbl">Bester heute</div>
-        </div>
-        <div class="stats-card">
-            <div class="stats-card-val" id="stat-tries-total">0</div>
-            <div class="stats-card-lbl">Versuche heute</div>
-        </div>
-        <div class="stats-card">
-            <div class="stats-card-val" id="stat-world-rank">#—</div>
-            <div class="stats-card-lbl">Weltrang</div>
-        </div>
-        <div class="stats-card">
-            <div class="stats-card-val">7</div>
-            <div class="stats-card-lbl">Tage Streak 🔥</div>
-        </div>
+  <button class="back-btn" onclick="showScreen('home')">← Zurück</button>
+  <div class="stats-title">DEINE STATS</div>
+  <div class="stats-grid">
+    <div class="stats-card">
+      <div class="stats-card-val" id="stat-best">—</div>
+      <div class="stats-card-lbl">Bester heute</div>
     </div>
-    <div class="leaderboard-container">
-        <div class="leaderboard-title">Top 10 Weltweit</div>
-        <div id="leaderboard-list"><div class="lb-loading">Lade Rangliste...</div></div>
+    <div class="stats-card">
+      <div class="stats-card-val" id="stat-tries2">0</div>
+      <div class="stats-card-lbl">Versuche heute</div>
     </div>
+    <div class="stats-card">
+      <div class="stats-card-val">#4.821</div>
+      <div class="stats-card-lbl">Weltrang</div>
+    </div>
+    <div class="stats-card">
+      <div class="stats-card-val">7</div>
+      <div class="stats-card-lbl">Tage Streak 🔥</div>
+    </div>
+  </div>
+  <div class="chart-container">
+    <div class="chart-title">Abweichung – letzte Versuche (ms)</div>
+    <svg class="chart-svg" height="80" viewBox="0 0 320 80" id="chart-svg"></svg>
+  </div>
 </div>
 
-<!-- <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script>
+  const TARGET_MS = 1337;
 
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>-->
+  let gameState = 'idle';
+  let startTime = null;
+  let timerRAF = null;
+  let tries = 0;
+  let bestDev = null;
+  let history = [];
 
-<script src="app.js"></script>
+  function fmt(ns) {
+    return Math.round(ns).toLocaleString('de-DE');
+  }
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if (id === 'stats') renderStats();
+  }
+
+  function startGame() {
+    gameState = 'idle';
+    startTime = null;
+    if (timerRAF) cancelAnimationFrame(timerRAF);
+    document.getElementById('timer-display').textContent = '0';
+    document.getElementById('timer-display').classList.remove('running');
+    document.getElementById('game-instruction').textContent = 'Tippe zum Starten';
+    document.getElementById('rings').innerHTML = '';
+  }
+
+  function handleGameTap(e) {
+    spawnRing(e.clientX, e.clientY);
+    if (gameState === 'idle') {
+      gameState = 'running';
+      startTime = performance.now();
+      document.getElementById('game-instruction').textContent = 'Jetzt nochmal tippen!';
+      document.getElementById('timer-display').classList.add('running');
+      (function tick() {
+        if (gameState !== 'running') return;
+        const ms = Math.round(performance.now() - startTime);
+        document.getElementById('timer-display').textContent = fmt(ms);
+        timerRAF = requestAnimationFrame(tick);
+      })();
+    } else if (gameState === 'running') {
+      gameState = 'done';
+      cancelAnimationFrame(timerRAF);
+      const ms = Math.round(performance.now() - startTime);
+      document.getElementById('timer-display').textContent = fmt(ms);
+      document.getElementById('timer-display').classList.remove('running');
+      tries++;
+      history.push(ms);
+      const dev = ms - TARGET_MS;
+      if (bestDev === null || Math.abs(dev) < Math.abs(bestDev)) bestDev = dev;
+      showResult(ms, dev);
+    }
+  }
+
+  function spawnRing(x, y) {
+    const r = document.createElement('div');
+    r.className = 'ring';
+    r.style.cssText = 'left:' + x + 'px;top:' + y + 'px;width:80px;height:80px';
+    document.getElementById('rings').appendChild(r);
+    setTimeout(() => r.remove(), 900);
+  }
+
+  function showResult(ms, dev) {
+    const absMs = Math.abs(dev);
+    let grade, emoji, cls;
+    if (absMs <= 20)       { grade = 'UNMÖGLICH'; emoji = '🏆'; cls = 'legendary'; }
+    else if (absMs <= 80)  { grade = 'STARK';     emoji = '🔥'; cls = 'good'; }
+    else if (absMs <= 200) { grade = 'SOLIDE';    emoji = '👍'; cls = 'ok'; }
+    else                   { grade = 'ÜBEN';      emoji = '😬'; cls = 'bad'; }
+
+    document.getElementById('result-grade').textContent = grade;
+    document.getElementById('result-grade').className = 'result-grade ' + cls;
+    document.getElementById('result-emoji').textContent = emoji;
+    document.getElementById('your-time').textContent = fmt(ms);
+
+    const sign = dev >= 0 ? '+' : '';
+    document.getElementById('dev-text').textContent = sign + fmt(dev) + ' ms';
+
+    const pct = Math.min(Math.max(0.5 + dev / (TARGET_MS * 0.4), 0.04), 0.96);
+    setTimeout(() => { document.getElementById('dev-indicator').style.left = (pct * 100) + '%'; }, 100);
+
+    const rankPct = Math.max(10, Math.min(99, Math.round(99 - absMs / 5)));
+    document.getElementById('rank-pct').textContent = rankPct + '%';
+
+    document.getElementById('tries-stat').textContent = tries;
+    if (bestDev !== null) {
+      document.getElementById('best-stat').textContent = fmt(TARGET_MS + bestDev);
+    }
+
+    setTimeout(() => showScreen('result'), 300);
+  }
+
+  function renderStats() {
+    document.getElementById('stat-tries2').textContent = tries;
+    document.getElementById('stat-best').textContent = bestDev !== null
+      ? fmt(TARGET_MS + bestDev) + ' ms' : '—';
+
+    const mockNs = history.length > 0 ? history : [
+      1450000, 1280000, 1380000,
+      1330000, 1350000, 1340000,
+      1337500, 1338200
+    ];
+    const w = 320, h = 80, pad = 20;
+    const devs = mockNs.map(v => Math.abs(v - TARGET_MS));
+    const maxD = Math.max.apply(null, devs.concat([50]));
+    const pts = devs.map(function(d, i) {
+      return [
+        pad + (i / (devs.length - 1)) * (w - pad * 2),
+        h - pad - (d / maxD) * (h - pad * 2)
+      ];
+    });
+    const pathD = pts.map((p, i) => (i === 0 ? 'M' : 'L') + p[0] + ',' + p[1]).join(' ');
+    const areaD = pathD + ' L' + pts[pts.length-1][0] + ',' + h + ' L' + pts[0][0] + ',' + h + ' Z';
+    const circles = pts.map(p => '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="3" fill="#c8f55a"/>').join('');
+
+    document.getElementById('chart-svg').innerHTML =
+      '<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">' +
+      '<stop offset="0%" stop-color="#c8f55a" stop-opacity="0.3"/>' +
+      '<stop offset="100%" stop-color="#c8f55a" stop-opacity="0"/>' +
+      '</linearGradient></defs>' +
+      '<path d="' + areaD + '" fill="url(#g)"/>' +
+      '<path d="' + pathD + '" fill="none" stroke="#c8f55a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+      circles +
+      '<line x1="' + pad + '" y1="' + (h-pad) + '" x2="' + (w-pad) + '" y2="' + (h-pad) + '" stroke="#222" stroke-width="1"/>';
+  }
+</script>
 
 </body>
 </html>

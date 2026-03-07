@@ -5,11 +5,10 @@ on:
     branches: [ main ]
     paths:
       - 'flutter/**'
-  workflow_dispatch: # Manuell auslösen möglich
+  workflow_dispatch:
 
 jobs:
 
-  # ── ANDROID ──
   build-android:
     name: Build Android APK
     runs-on: ubuntu-latest
@@ -43,40 +42,3 @@ jobs:
         with:
           name: impossitap-android
           path: flutter/build/app/outputs/flutter-apk/app-release.apk
-
-  # ── iOS ──
-  build-ios:
-    name: Build iOS IPA
-    runs-on: macos-latest
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.19.0'
-          channel: 'stable'
-
-      - name: Get Dependencies
-        working-directory: flutter
-        run: flutter pub get
-
-      - name: Build iOS (no codesign)
-        working-directory: flutter
-        run: flutter build ios --release --no-codesign
-
-      - name: Create IPA
-        run: |
-          mkdir -p flutter/build/ios/ipa/Payload
-          cp -r flutter/build/ios/Release-iphoneos/Runner.app \
-            flutter/build/ios/ipa/Payload/
-          cd flutter/build/ios/ipa
-          zip -r ImpossiTap.ipa Payload
-
-      - name: Upload IPA
-        uses: actions/upload-artifact@v4
-        with:
-          name: impossitap-ios
-          path: flutter/build/ios/ipa/ImpossiTap.ipa

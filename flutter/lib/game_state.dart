@@ -1,8 +1,10 @@
 class GameState {
-  static const int targetUs = 1337000; // 1.337 seconds in microseconds
+  static const int targetUs = 1337000;
 
   int tries = 0;
-  int? bestDeviation; // in nanoseconds, can be negative
+  int? bestDeviation;
+  List<int> history = [];
+  int streak = 0;
 
   int get bestUs => targetUs + (bestDeviation ?? 0);
 
@@ -11,6 +13,8 @@ class GameState {
     if (bestDeviation == null || deviationNs.abs() < bestDeviation!.abs()) {
       bestDeviation = deviationNs;
     }
+    history.add(deviationNs);
+    if (history.length > 50) history.removeAt(0);
   }
 
   String get formattedBest {
@@ -21,7 +25,6 @@ class GameState {
   static String formatUs(int us) => _formatUs(us);
 
   static String _formatUs(int us) {
-    // Format with German thousands separator
     final str = us.toString();
     final buffer = StringBuffer();
     final offset = str.length % 3;

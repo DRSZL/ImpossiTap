@@ -28,7 +28,17 @@ class _ResultScreenState extends State<ResultScreen>
   @override
   void initState() {
     super.initState();
-    HapticFeedback.mediumImpact();
+    final absMs = widget.devUs.abs() / 1000;
+    if (absMs == 0) {
+      HapticFeedback.heavyImpact();
+      Future.delayed(const Duration(milliseconds: 80), HapticFeedback.heavyImpact);
+    } else if (absMs <= 20) {
+      HapticFeedback.heavyImpact();
+    } else if (absMs <= 80) {
+      HapticFeedback.mediumImpact();
+    } else {
+      HapticFeedback.lightImpact();
+    }
     _barController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),

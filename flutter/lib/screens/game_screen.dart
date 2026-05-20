@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../game_state.dart';
+import '../storage_service.dart';
 import 'result_screen.dart';
 
 class GameScreen extends StatefulWidget {
@@ -60,6 +61,7 @@ class _GameScreenState extends State<GameScreen>
       _running = false;
       final dev = ns - GameState.targetUs;
       widget.gameState.recordAttempt(dev);
+      StorageService().save(widget.gameState);
 
       setState(() => _elapsedUs = ns);
 

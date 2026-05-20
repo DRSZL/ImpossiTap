@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../game_state.dart';
+import '../storage_service.dart';
 import 'game_screen.dart';
 import 'stats_screen.dart';
 
@@ -13,6 +14,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   final GameState gameState = GameState();
+  final _storage = StorageService();
   late AnimationController _pulseController;
   late Animation<double> _pulseAnim;
 
@@ -26,12 +28,18 @@ class _HomeScreenState extends State<HomeScreen>
     _pulseAnim = Tween<double>(begin: 0.2, end: 0.45).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
+    _loadFromStorage();
   }
 
   @override
   void dispose() {
     _pulseController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadFromStorage() async {
+    await _storage.load(gameState);
+    if (mounted) setState(() {});
   }
 
   void _goToGame() async {

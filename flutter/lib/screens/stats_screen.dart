@@ -63,7 +63,7 @@ class StatsScreen extends StatelessWidget {
                     label: 'VERSUCHE HEUTE',
                   ),
                   const _StatsCard(value: '#4.821', label: 'WELTRANG'),
-                  const _StatsCard(value: '7', label: 'TAGE STREAK 🔥'),
+                  _StatsCard(value: '${gameState.streak}', label: 'TAGE STREAK 🔥'),
                 ],
               ),
               const SizedBox(height: 28),
@@ -89,16 +89,16 @@ class StatsScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    gameState.tries > 0
-                        ? const Text(
-                            'Chart nach mehr Versuchen verfügbar',
+                    gameState.history.isNotEmpty
+                        ? _RealChart(history: gameState.history)
+                        : const Text(
+                            'Noch keine Versuche heute',
                             style: TextStyle(
                               fontFamily: 'DMMono',
                               fontSize: 10,
                               color: Color(0xFF444444),
                             ),
-                          )
-                        : const _MockChart(),
+                          ),
                   ],
                 ),
               ),
@@ -151,13 +151,17 @@ class _StatsCard extends StatelessWidget {
   }
 }
 
-class _MockChart extends StatelessWidget {
-  const _MockChart();
+class _RealChart extends StatelessWidget {
+  final List<int> history;
+  const _RealChart({required this.history});
 
   @override
   Widget build(BuildContext context) {
-    final data = [113.0, 57.0, 43.0, 28.0, 15.0, 7.0, 3.0, 2.0];
+    final display =
+        history.length > 20 ? history.sublist(history.length - 20) : history;
+    final data = display.map((d) => d.abs() / 1000).toList();
     final maxVal = data.reduce((a, b) => a > b ? a : b);
+    if (maxVal == 0) return const SizedBox.shrink();
 
     return SizedBox(
       height: 60,

@@ -61,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0A0A),
+      backgroundColor: const Color(0xFF080808),
       body: SafeArea(
         child: Stack(
           children: [
@@ -88,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen>
                       style: TextStyle(
                         fontFamily: 'DMMono',
                         fontSize: 10,
-                        color: Color(0xFF555555),
+                        color: Color(0xFF383838),
                         letterSpacing: 3,
                       ),
                     ),
@@ -104,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen>
                       style: TextStyle(
                         fontFamily: 'DMMono',
                         fontSize: 10,
-                        color: Color(0xFF555555),
+                        color: Color(0xFF383838),
                         letterSpacing: 4,
                       ),
                     ),
@@ -117,6 +117,10 @@ class _HomeScreenState extends State<HomeScreen>
                         color: Color(0xFFC8F55A),
                         letterSpacing: 1,
                         height: 1,
+                        shadows: [
+                          Shadow(color: Color(0x47C8F55A), blurRadius: 20),
+                          Shadow(color: Color(0x1AC8F55A), blurRadius: 50),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -125,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen>
                       style: TextStyle(
                         fontFamily: 'DMMono',
                         fontSize: 11,
-                        color: Color(0xFF555555),
+                        color: Color(0xFF383838),
                         letterSpacing: 3,
                       ),
                     ),
@@ -150,43 +154,93 @@ class _HomeScreenState extends State<HomeScreen>
                   child: AnimatedBuilder(
                     animation: _pulseAnim,
                     builder: (context, child) {
-                      return Container(
+                      return SizedBox(
                         width: 180,
                         height: 180,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: const Color(0xFFC8F55A),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFFC8F55A)
-                                  .withOpacity(_pulseAnim.value),
-                              blurRadius: 60,
-                              spreadRadius: 10,
-                            ),
-                          ],
-                        ),
-                        child: const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'TIPPE',
-                              style: TextStyle(
-                                fontFamily: 'BebasNeue',
-                                fontSize: 28,
-                                color: Color(0xFF0A0A0A),
-                                letterSpacing: 4,
+                        child: OverflowBox(
+                          maxWidth: 340,
+                          maxHeight: 340,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // Äußere diffuse Aura
+                              Container(
+                                width: 340,
+                                height: 340,
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  gradient: RadialGradient(
+                                    colors: [Color(0x0AC8F55A), Colors.transparent],
+                                  ),
+                                ),
                               ),
-                            ),
-                            Text(
-                              'ZWEIMAL',
-                              style: TextStyle(
-                                fontFamily: 'DMMono',
-                                fontSize: 9,
-                                color: Color(0x80000000),
-                                letterSpacing: 2,
+                              // Innere engere Aura
+                              Container(
+                                width: 260,
+                                height: 260,
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  gradient: RadialGradient(
+                                    colors: [Color(0x06C8F55A), Colors.transparent],
+                                  ),
+                                ),
                               ),
-                            ),
-                          ],
+                              // Play-Button
+                              Container(
+                                width: 180,
+                                height: 180,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: const Color(0xFFC8F55A),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFFC8F55A).withOpacity(0.12),
+                                      blurRadius: 0,
+                                      spreadRadius: 1,
+                                    ),
+                                    BoxShadow(
+                                      color: const Color(0xFFC8F55A)
+                                          .withOpacity(_pulseAnim.value * 0.55),
+                                      blurRadius: 25,
+                                    ),
+                                    BoxShadow(
+                                      color: const Color(0xFFC8F55A)
+                                          .withOpacity(_pulseAnim.value * 0.25),
+                                      blurRadius: 60,
+                                    ),
+                                    BoxShadow(
+                                      color: const Color(0xFFC8F55A)
+                                          .withOpacity(_pulseAnim.value * 0.12),
+                                      blurRadius: 110,
+                                    ),
+                                  ],
+                                ),
+                                child: const Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'TIPPE',
+                                      style: TextStyle(
+                                        fontFamily: 'BebasNeue',
+                                        fontSize: 28,
+                                        color: Color(0xFF0A0A0A),
+                                        letterSpacing: 4,
+                                      ),
+                                    ),
+                                    Text(
+                                      'ZWEIMAL',
+                                      style: TextStyle(
+                                        fontFamily: 'DMMono',
+                                        fontSize: 9,
+                                        color: Color(0x80000000),
+                                        letterSpacing: 2,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     },
@@ -226,8 +280,8 @@ class _StatBox extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
       decoration: BoxDecoration(
-        color: const Color(0xFF141414),
-        border: Border.all(color: const Color(0xFF222222)),
+        color: const Color(0x04C8F55A),
+        border: Border.all(color: const Color(0x0FC8F55A)),
       ),
       child: Column(
         children: [
@@ -238,6 +292,7 @@ class _StatBox extends StatelessWidget {
               fontSize: 14,
               color: Colors.white,
               fontWeight: FontWeight.w500,
+              shadows: [Shadow(color: Color(0x2EC8F55A), blurRadius: 8)],
             ),
           ),
           const SizedBox(height: 4),
@@ -283,6 +338,9 @@ class _NavTab extends StatelessWidget {
             fontSize: 10,
             letterSpacing: 2,
             color: active ? const Color(0xFFC8F55A) : const Color(0xFF555555),
+            shadows: active
+                ? [const Shadow(color: Color(0x33C8F55A), blurRadius: 6)]
+                : null,
           ),
         ),
       ),

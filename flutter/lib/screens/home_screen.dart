@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../game_state.dart';
 import '../storage_service.dart';
+import '../utils/fade_page_route.dart';
 import 'game_screen.dart';
 import 'stats_screen.dart';
 
@@ -45,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen>
   void _goToGame() async {
     final result = await Navigator.push<int>(
       context,
-      MaterialPageRoute(builder: (_) => GameScreen(gameState: gameState)),
+      FadePageRoute(page: GameScreen(gameState: gameState)),
     );
     if (result != null) setState(() {});
   }
@@ -53,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen>
   void _goToStats() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => StatsScreen(gameState: gameState)),
+      FadePageRoute(page: StatsScreen(gameState: gameState)),
     );
   }
 

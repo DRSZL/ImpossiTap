@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../game_state.dart';
+import '../utils/fade_page_route.dart';
 import 'game_screen.dart';
 import 'home_screen.dart';
 
@@ -235,10 +236,7 @@ class _ResultScreenState extends State<ResultScreen>
                       onTap: () {
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                GameScreen(gameState: widget.gameState),
-                          ),
+                          FadePageRoute(page: GameScreen(gameState: widget.gameState)),
                         );
                       },
                       child: Container(
@@ -263,7 +261,7 @@ class _ResultScreenState extends State<ResultScreen>
                       onTap: () {
                         Navigator.pushAndRemoveUntil(
                           context,
-                          MaterialPageRoute(builder: (_) => const HomeScreen()),
+                          FadePageRoute(page: const HomeScreen()),
                           (route) => false,
                         );
                       },

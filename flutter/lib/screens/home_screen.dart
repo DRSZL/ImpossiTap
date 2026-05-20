@@ -140,8 +140,6 @@ class _HomeScreenState extends State<HomeScreen>
                     _StatBox(label: 'BESTER (NS)', value: gameState.formattedBest),
                     const SizedBox(width: 16),
                     _StatBox(label: 'VERSUCHE', value: gameState.tries.toString()),
-                    const SizedBox(width: 16),
-                    const _StatBox(label: 'RANG', value: '#4.821'),
                   ],
                 ),
                 const SizedBox(height: 48),

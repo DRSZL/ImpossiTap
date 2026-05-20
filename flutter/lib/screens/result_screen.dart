@@ -160,7 +160,7 @@ class _ResultScreenState extends State<ResultScreen>
                               fontSize: 8,
                               color: Color(0xFF555555))),
                       Text(
-                        '$sign${_formatDevNs(widget.devUs)} NS',
+                        '$sign${GameState.formatUs(widget.devUs.abs())} NS',
                         style: const TextStyle(
                             fontFamily: 'DMMono',
                             fontSize: 8,
@@ -292,16 +292,6 @@ class _ResultScreenState extends State<ResultScreen>
     );
   }
 
-  String _formatDevNs(int ns) {
-    final str = ns.abs().toString();
-    final buffer = StringBuffer();
-    final offset = str.length % 3;
-    for (int i = 0; i < str.length; i++) {
-      if (i > 0 && (i - offset) % 3 == 0) buffer.write('.');
-      buffer.write(str[i]);
-    }
-    return buffer.toString();
-  }
 }
 
 class _CompareBox extends StatelessWidget {

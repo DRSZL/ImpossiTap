@@ -62,7 +62,6 @@ class StatsScreen extends StatelessWidget {
                     value: gameState.tries.toString(),
                     label: 'VERSUCHE HEUTE',
                   ),
-                  const _StatsCard(value: '#4.821', label: 'WELTRANG'),
                   _StatsCard(value: '${gameState.streak}', label: 'TAGE STREAK 🔥'),
                 ],
               ),

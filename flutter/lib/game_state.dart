@@ -1,5 +1,16 @@
 class GameState {
-  static const int targetUs = 1337000;
+  static const int _targetMin = 700000;
+  static const int _targetMax = 2000000;
+  static const int _lcgMultiplier = 1664525;
+  static const int _lcgIncrement = 1013904223;
+
+  static int get targetUs => targetForDate(DateTime.now());
+
+  static int targetForDate(DateTime date) {
+    final seed = date.year * 10000 + date.month * 100 + date.day;
+    final hash = (seed * _lcgMultiplier + _lcgIncrement) & 0x7FFFFFFF;
+    return _targetMin + (hash % (_targetMax - _targetMin));
+  }
 
   int tries = 0;
   int? bestDeviation;

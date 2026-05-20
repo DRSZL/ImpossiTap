@@ -23,8 +23,27 @@ void main() {
         state.recordAttempt(i * 1000);
       }
       expect(state.history.length, 50);
-      expect(state.history.first, 5000); // Einträge 0–4 wurden entfernt
+      expect(state.history.first, 5000);
       expect(state.history.last, 54000);
+    });
+  });
+
+  group('GameState.targetForDate', () {
+    test('returns same value for same date', () {
+      final date = DateTime(2026, 5, 20);
+      expect(GameState.targetForDate(date), GameState.targetForDate(date));
+    });
+
+    test('returns different values for different dates', () {
+      final d1 = DateTime(2026, 5, 20);
+      final d2 = DateTime(2026, 5, 21);
+      expect(GameState.targetForDate(d1), isNot(GameState.targetForDate(d2)));
+    });
+
+    test('is within valid range', () {
+      final target = GameState.targetForDate(DateTime(2026, 5, 20));
+      expect(target, greaterThanOrEqualTo(700000));
+      expect(target, lessThan(2000000));
     });
   });
 }

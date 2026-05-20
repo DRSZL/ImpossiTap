@@ -153,6 +153,29 @@ class _HomeScreenState extends State<HomeScreen>
                   onTap: _goToGame,
                   child: AnimatedBuilder(
                     animation: _pulseAnim,
+                    child: const Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'TIPPE',
+                          style: TextStyle(
+                            fontFamily: 'BebasNeue',
+                            fontSize: 28,
+                            color: Color(0xFF0A0A0A),
+                            letterSpacing: 4,
+                          ),
+                        ),
+                        Text(
+                          'ZWEIMAL',
+                          style: TextStyle(
+                            fontFamily: 'DMMono',
+                            fontSize: 9,
+                            color: Color(0x80000000),
+                            letterSpacing: 2,
+                          ),
+                        ),
+                      ],
+                    ),
                     builder: (context, child) {
                       return SizedBox(
                         width: 180,
@@ -164,10 +187,10 @@ class _HomeScreenState extends State<HomeScreen>
                             alignment: Alignment.center,
                             children: [
                               // Äußere diffuse Aura
-                              Container(
+                              const Container(
                                 width: 340,
                                 height: 340,
-                                decoration: const BoxDecoration(
+                                decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   gradient: RadialGradient(
                                     colors: [Color(0x0AC8F55A), Colors.transparent],
@@ -175,10 +198,10 @@ class _HomeScreenState extends State<HomeScreen>
                                 ),
                               ),
                               // Innere engere Aura
-                              Container(
+                              const Container(
                                 width: 260,
                                 height: 260,
-                                decoration: const BoxDecoration(
+                                decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   gradient: RadialGradient(
                                     colors: [Color(0x06C8F55A), Colors.transparent],
@@ -208,36 +231,9 @@ class _HomeScreenState extends State<HomeScreen>
                                           .withOpacity(_pulseAnim.value * 0.25),
                                       blurRadius: 60,
                                     ),
-                                    BoxShadow(
-                                      color: const Color(0xFFC8F55A)
-                                          .withOpacity(_pulseAnim.value * 0.12),
-                                      blurRadius: 110,
-                                    ),
                                   ],
                                 ),
-                                child: const Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'TIPPE',
-                                      style: TextStyle(
-                                        fontFamily: 'BebasNeue',
-                                        fontSize: 28,
-                                        color: Color(0xFF0A0A0A),
-                                        letterSpacing: 4,
-                                      ),
-                                    ),
-                                    Text(
-                                      'ZWEIMAL',
-                                      style: TextStyle(
-                                        fontFamily: 'DMMono',
-                                        fontSize: 9,
-                                        color: Color(0x80000000),
-                                        letterSpacing: 2,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                child: child,
                               ),
                             ],
                           ),
